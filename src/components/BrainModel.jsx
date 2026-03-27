@@ -105,7 +105,7 @@ function HoloBrain({ onHover, active, onLabelPositions }) {
 
   const gltf = useLoader(GLTFLoader, '/brain.glb');
 
-  const { geo, wGeo, pGeo } = useMemo(() => {
+  const { geo, wGeo, pGeo, synapseGeo, synapseNodes } = useMemo(() => {
     let g = null;
     gltf.scene.traverse(c => { if (c.isMesh && !g) g = c.geometry.clone(); });
     if (!g) return {};
@@ -135,7 +135,51 @@ function HoloBrain({ onHover, active, onLabelPositions }) {
     pg.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
     pg.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1));
     pg.setAttribute('aFiring', new THREE.BufferAttribute(firing, 1));
-    return { geo: g, wGeo: w, pGeo: pg };
+
+    // Neural synapse paths — pick ~30 node pairs on the brain surface, build short arcs between them
+    const SYNAPSE_COUNT = 30;
+    const POINTS_PER_SYNAPSE = 12; // points per arc
+    const totalPts = SYNAPSE_COUNT * POINTS_PER_SYNAPSE;
+    const synPos = new Float32Array(totalPts * 3);
+    const synProgress = new Float32Array(totalPts); // 0..1 position along arc
+    const synId = new Float32Array(totalPts); // which synapse this point belongs to
+    const nodes = []; // store start/end for CPU animation
+
+    for (let s = 0; s < SYNAPSE_COUNT; s++) {
+      // Pick two random surface points
+      const i1 = Math.floor(Math.random() * pos.count);
+      const i2 = Math.floor(Math.random() * pos.count);
+      const p1 = new THREE.Vector3(pos.getX(i1), pos.getY(i1), pos.getZ(i1));
+      const p2 = new THREE.Vector3(pos.getX(i2), pos.getY(i2), pos.getZ(i2));
+      // Skip if too far apart or too close
+      const dist = p1.distanceTo(p2);
+      if (dist > 1.2 || dist < 0.15) { p2.copy(p1).add(new THREE.Vector3((Math.random()-0.5)*0.6, (Math.random()-0.5)*0.4, (Math.random()-0.5)*0.6)); }
+      // Arc midpoint lifted outward for a subtle curve
+      const mid = p1.clone().add(p2).multiplyScalar(0.5);
+      const outward = mid.clone().normalize().multiplyScalar(0.12);
+      mid.add(outward);
+
+      nodes.push({ p1: p1.clone(), p2: p2.clone(), mid: mid.clone(), phase: Math.random() * Math.PI * 2, speed: 0.8 + Math.random() * 1.2 });
+
+      for (let j = 0; j < POINTS_PER_SYNAPSE; j++) {
+        const t = j / (POINTS_PER_SYNAPSE - 1);
+        // Quadratic bezier: (1-t)^2*p1 + 2*(1-t)*t*mid + t^2*p2
+        const x = (1-t)*(1-t)*p1.x + 2*(1-t)*t*mid.x + t*t*p2.x;
+        const y = (1-t)*(1-t)*p1.y + 2*(1-t)*t*mid.y + t*t*p2.y;
+        const z = (1-t)*(1-t)*p1.z + 2*(1-t)*t*mid.z + t*t*p2.z;
+        const idx = s * POINTS_PER_SYNAPSE + j;
+        synPos[idx*3] = x; synPos[idx*3+1] = y; synPos[idx*3+2] = z;
+        synProgress[idx] = t;
+        synId[idx] = s;
+      }
+    }
+
+    const sg = new THREE.BufferGeometry();
+    sg.setAttribute('position', new THREE.BufferAttribute(synPos, 3));
+    sg.setAttribute('aProgress', new THREE.BufferAttribute(synProgress, 1));
+    sg.setAttribute('aSynapseId', new THREE.BufferAttribute(synId, 1));
+
+    return { geo: g, wGeo: w, pGeo: pg, synapseGeo: sg, synapseNodes: nodes };
   }, [gltf]);
 
   const accent = useMemo(() => new THREE.Color('#00ff88'), []);
@@ -300,6 +344,59 @@ function HoloBrain({ onHover, active, onLabelPositions }) {
     transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
   }), [accent]);
 
+  // Neural impulse (synapse) material — traveling electric pulses
+  const synMat = useMemo(() => new THREE.ShaderMaterial({
+    vertexShader: `
+      attribute float aProgress;
+      attribute float aSynapseId;
+      uniform float uTime;
+      varying float vAlpha;
+      varying float vHeight;
+      void main() {
+        // Each synapse has its own phase, creating staggered pulses
+        float phase = aSynapseId * 2.17 + aSynapseId * 0.73; // pseudo-random per synapse
+        float speed = 1.2 + fract(aSynapseId * 0.37) * 0.8;
+        // Traveling pulse: a narrow gaussian that moves along the arc
+        float pulsePos = fract(uTime * speed * 0.3 + phase);
+        float dist = abs(aProgress - pulsePos);
+        dist = min(dist, 1.0 - dist); // wrap around
+        float pulse = exp(-dist * dist * 80.0); // narrow bright pulse
+        // Secondary slower pulse for variety
+        float pulsePos2 = fract(uTime * speed * 0.15 + phase + 0.5);
+        float dist2 = abs(aProgress - pulsePos2);
+        dist2 = min(dist2, 1.0 - dist2);
+        float pulse2 = exp(-dist2 * dist2 * 50.0) * 0.5;
+        // Fade: each synapse randomly active/dormant
+        float active = smoothstep(0.3, 0.5, sin(uTime * 0.4 + phase * 3.0));
+        vAlpha = (pulse + pulse2) * active;
+        vHeight = position.y * 0.5 + 0.5;
+        gl_PointSize = (2.0 + pulse * 3.0) * active;
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize *= (200.0 / -mv.z);
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: `
+      uniform float uTime;
+      varying float vAlpha;
+      varying float vHeight;
+      void main() {
+        float d = length(gl_PointCoord - vec2(0.5));
+        if (d > 0.5) discard;
+        float g = exp(-d * 6.0);
+        // Gradient color matching brain
+        float gradT = vHeight + sin(uTime * 0.3) * 0.1;
+        vec3 colGreen = vec3(0.0, 1.0, 0.53);
+        vec3 colCyan  = vec3(0.0, 0.83, 1.0);
+        vec3 colWhite = vec3(0.8, 1.0, 0.95);
+        vec3 gradCol = mix(colCyan, colGreen, smoothstep(0.3, 0.8, gradT));
+        // Bright core fades to gradient color
+        vec3 col = mix(gradCol, colWhite, g * 0.4);
+        gl_FragColor = vec4(col * g, g * vAlpha * 0.6);
+      }`,
+    uniforms: { uTime: { value: 0 } },
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+  }), []);
+
   useEffect(() => {
     if (pGeo) firingRef.current = new Float32Array(pGeo.attributes.aSize.count);
   }, [pGeo]);
@@ -319,6 +416,7 @@ function HoloBrain({ onHover, active, onLabelPositions }) {
     holoMat.uniforms.uTime.value = t;
     wireMat.uniforms.uTime.value = t;
     ptMat.uniforms.uTime.value = t;
+    synMat.uniforms.uTime.value = t;
 
     const hlIdx = active !== null && active < ANCHORS.length ? active : -1;
     [holoMat, wireMat].forEach(mat => {
@@ -371,10 +469,11 @@ function HoloBrain({ onHover, active, onLabelPositions }) {
   if (!geo) return null;
 
   return (
-    <group ref={group} rotation={[0.15, 0, 0]}>
+    <group ref={group} rotation={[-Math.PI / 2 + 0.15, 0, 0]}>
       <mesh ref={meshRef} geometry={geo} material={holoMat} />
       <lineSegments geometry={wGeo} material={wireMat} />
       {pGeo && <points geometry={pGeo} material={ptMat} />}
+      {synapseGeo && <points geometry={synapseGeo} material={synMat} />}
     </group>
   );
 }
