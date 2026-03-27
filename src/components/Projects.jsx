@@ -21,7 +21,7 @@ export default function Projects() {
   useEffect(() => {
     fetch(`https://api.github.com/users/${personal.githubUsername}/repos?sort=updated&per_page=6`)
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-      .then(d => { setRepos(d.filter(r => !r.fork).slice(0, 6)); setLoading(false); })
+      .then(d => { setRepos(d.filter(r => !r.fork && ['leetcode-tracker', 'resume-builder'].includes(r.name))); setLoading(false); })
       .catch(() => { setError(true); setLoading(false); });
   }, []);
 
