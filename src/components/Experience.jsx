@@ -14,7 +14,7 @@ function TimelineLine() {
 
   return (
     <div ref={ref} style={{
-      position: 'absolute', left: 18, top: 8, bottom: 8, width: 2,
+      position: 'absolute', left: 'clamp(10px, 2vw, 18px)', top: 8, bottom: 8, width: 2,
       background: 'rgba(0,255,136,0.06)', borderRadius: 1,
     }}>
       <motion.div style={{
@@ -29,7 +29,7 @@ function TimelineLine() {
 
 export default function Experience() {
   return (
-    <section id="experience" style={{ width: '100%', padding: '120px 0' }}>
+    <section id="experience" style={{ width: '100%', padding: 'clamp(60px, 10vw, 120px) 0' }}>
       <div className="wrap">
         <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
@@ -51,13 +51,13 @@ export default function Experience() {
                 whileInView={{ opacity: 1, x: 0, rotate: 0, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.1 * i, ease: [0.22, 1, 0.36, 1] }}
-                style={{ paddingLeft: 56, position: 'relative' }}
+                style={{ paddingLeft: 'clamp(36px, 6vw, 56px)', position: 'relative' }}
               >
-                <div style={{ position: 'absolute', left: 10, top: 32 }}>
+                <div style={{ position: 'absolute', left: 'clamp(2px, 1vw, 10px)', top: 32 }}>
                   <SonarDot />
                 </div>
 
-                <TiltCard maxTilt={6} className="card" style={{ padding: '32px 36px' }}>
+                <TiltCard maxTilt={6} className="card" style={{ padding: 'clamp(20px, 4vw, 32px) clamp(16px, 4vw, 36px)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 6 }}>
                     <div>
                       <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: 4 }}>{job.role}</h3>

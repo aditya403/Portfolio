@@ -106,7 +106,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div style={{ background: 'rgba(10,10,10,0.97)', backdropFilter: 'blur(24px)', borderTop: '1px solid rgba(0,255,136,0.08)', padding: '16px 32px 28px' }}>
+        <div style={{ background: 'rgba(10,10,10,0.97)', backdropFilter: 'blur(24px)', borderTop: '1px solid rgba(0,255,136,0.08)', padding: '16px 20px 28px' }}>
           {LINKS.map(([label, id]) => (
             <Link key={id} to={id} smooth duration={500} offset={-70}
               style={{ display: 'block', padding: '12px 0', borderBottom: '1px solid rgba(0,255,136,0.06)', fontSize: 15, fontWeight: 600, color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}

@@ -337,10 +337,12 @@ function HoloBrain({ onHover, active, onLabelPositions }) {
 }
 
 /* ── Skill label (pure HTML overlay) — always expanded, colored per-category ── */
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+
 function SkillLabel({ skill, screenPos, isActive }) {
   if (!screenPos) return null;
   const behindFade = screenPos.z > 0.998 ? 0.25 : screenPos.z > 0.995 ? 0.5 : 1;
-  const c = skill.color; // e.g. '#00ff88'
+  const c = skill.color;
 
   return (
     <div style={{
@@ -348,8 +350,8 @@ function SkillLabel({ skill, screenPos, isActive }) {
       left: screenPos.x,
       top: screenPos.y,
       transform: 'translate(-50%, -50%)',
-      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-      padding: '10px 16px',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: isMobile ? 4 : 8,
+      padding: isMobile ? '6px 10px' : '10px 16px',
       borderRadius: 14,
       background: isActive ? `${c}30` : `${c}1A`,
       border: `1px solid ${isActive ? c + '70' : c + '35'}`,
@@ -360,18 +362,19 @@ function SkillLabel({ skill, screenPos, isActive }) {
       pointerEvents: 'none', zIndex: 10,
     }}>
       <div style={{
-        fontSize: 13, fontWeight: 700, letterSpacing: 2.5, textTransform: 'uppercase',
+        fontSize: isMobile ? 10 : 13, fontWeight: 700, letterSpacing: isMobile ? 1.5 : 2.5, textTransform: 'uppercase',
         color: c,
         fontFamily: "'JetBrains Mono', monospace",
         textShadow: isActive ? `0 0 10px ${c}60` : 'none',
       }}>{skill.category}</div>
       <div style={{
-        display: 'flex', flexWrap: 'wrap', gap: 5, justifyContent: 'center',
-        maxWidth: 240,
+        display: 'flex', flexWrap: 'wrap', gap: isMobile ? 3 : 5, justifyContent: 'center',
+        maxWidth: isMobile ? 160 : 240,
       }}>
         {skill.items.map(item => (
           <span key={item} style={{
-            padding: '4px 12px', borderRadius: 50, fontSize: 12, fontWeight: 500,
+            padding: isMobile ? '2px 8px' : '4px 12px', borderRadius: 50,
+            fontSize: isMobile ? 9 : 12, fontWeight: 500,
             color: '#eee',
             background: `${c}20`,
             border: `1px solid ${c}35`,
@@ -423,9 +426,11 @@ export default function BrainModel() {
           position: 'absolute', bottom: 12, left: '50%', transform: 'translateX(-50%)',
           fontSize: 10, fontWeight: 600, letterSpacing: 2, color: 'rgba(0,255,136,0.2)',
           fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase',
-          pointerEvents: 'none',
+          pointerEvents: 'none', whiteSpace: 'nowrap',
         }}>
-          drag to rotate &middot; hover to explore
+          {typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches
+            ? 'drag to rotate \u00b7 hover to explore'
+            : 'pinch to zoom \u00b7 swipe to rotate'}
         </div>
       )}
     </div>

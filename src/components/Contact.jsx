@@ -21,14 +21,14 @@ const links = [
 
 export default function Contact() {
   return (
-    <section id="contact" style={{ width: '100%', minHeight: '100vh', padding: '120px 0 80px', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
+    <section id="contact" style={{ width: '100%', minHeight: '100vh', padding: 'clamp(60px, 10vw, 120px) 0 clamp(40px, 8vw, 80px)', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
       <motion.div
         initial={{ scale: 0, opacity: 0 }}
         whileInView={{ scale: 1, opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 1.2, ease: 'easeOut' }}
         style={{
-          position: 'absolute', width: 800, height: 800,
+          position: 'absolute', width: 'min(800px, 100vw)', height: 'min(800px, 100vw)',
           top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
           borderRadius: '50%',
           background: 'radial-gradient(circle, rgba(0,255,136,0.1) 0%, transparent 70%)',
@@ -69,7 +69,7 @@ export default function Contact() {
                 display: 'inline-flex', alignItems: 'center', gap: 12,
                 fontSize: 'clamp(14px,2vw,20px)', fontWeight: 700,
                 color: '#0a0a0a', textDecoration: 'none',
-                padding: '18px 36px', borderRadius: 50, background: '#00ff88',
+                padding: 'clamp(14px, 3vw, 18px) clamp(20px, 5vw, 36px)', borderRadius: 50, background: '#00ff88',
                 animation: 'breatheGlow 2s ease-in-out infinite', transition: 'transform 0.3s',
               }}
               onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
@@ -80,7 +80,7 @@ export default function Contact() {
           </MagneticWrap>
         </motion.div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,240px),1fr))', gap: 14 }}>
           {links.map(({ label, href, Icon, color, value }, i) => (
             <motion.div key={label} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.08 * i }}>
               <TiltCard maxTilt={8}>

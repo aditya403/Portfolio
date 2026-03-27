@@ -46,7 +46,7 @@ function StatRing({ value, suffix, label, color, max = 100 }) {
 
 export default function About() {
   return (
-    <section id="about" style={{ width: '100%', padding: '120px 0', position: 'relative' }}>
+    <section id="about" style={{ width: '100%', padding: 'clamp(60px, 10vw, 120px) 0', position: 'relative' }}>
       <div className="wrap">
         <motion.div {...anim()}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
@@ -56,13 +56,13 @@ export default function About() {
           <h2 className="section-title">A little about myself</h2>
         </motion.div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'auto auto', gap: 16 }}>
+        <div className="about-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'auto auto', gap: 16 }}>
           {/* Photo + Bio */}
-          <motion.div {...anim(0.05)} style={{ gridColumn: 'span 2' }}>
+          <motion.div {...anim(0.05)} style={{ gridColumn: 'span 2' }} className="about-bio">
             <TiltCard maxTilt={8} className="card" style={{ padding: '32px', height: '100%' }}>
               <div style={{ display: 'flex', gap: 28, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                <ScanlinePhoto src="/aditya_image.jpeg" alt="Aditya Mishra" style={{ width: 180, height: 220, flexShrink: 0 }} />
-                <div style={{ flex: 1, minWidth: 200 }}>
+                <ScanlinePhoto src="/aditya_image.jpeg" alt="Aditya Mishra" style={{ width: 'clamp(120px, 30vw, 180px)', height: 'clamp(150px, 36vw, 220px)', flexShrink: 0 }} />
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 3, color: 'rgba(255,255,255,0.2)', marginBottom: 14, textTransform: 'uppercase' }}>Background</div>
                   <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.55)', lineHeight: 1.85, marginBottom: 14 }}>
                     {personal.summary}
@@ -133,6 +133,12 @@ export default function About() {
           </div>
         </motion.div>
       </div>
+      <style>{`
+        @media (max-width: 768px) {
+          .about-grid { grid-template-columns: 1fr !important; }
+          .about-bio { grid-column: span 1 !important; }
+        }
+      `}</style>
     </section>
   );
 }

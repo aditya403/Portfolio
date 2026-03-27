@@ -5,7 +5,7 @@ const BrainModel = lazy(() => import('./BrainModel'));
 
 export default function BrainSkills() {
   return (
-    <section id="skills" style={{ width: '100%', padding: '120px 0 80px', position: 'relative', overflow: 'visible' }}>
+    <section id="skills" style={{ width: '100%', padding: 'clamp(60px, 10vw, 120px) 0 clamp(40px, 8vw, 80px)', position: 'relative', overflow: 'visible' }}>
       {/* Background glow */}
       <div style={{
         position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
@@ -38,7 +38,7 @@ export default function BrainSkills() {
           transition={{ duration: 0.8 }}
           style={{
             width: '100%',
-            height: 'clamp(600px, 85vh, 950px)',
+            height: 'clamp(400px, 75vh, 950px)',
             borderRadius: 24,
             overflow: 'visible',
             border: 'none',

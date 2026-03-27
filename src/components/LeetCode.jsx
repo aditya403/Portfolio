@@ -68,7 +68,7 @@ export default function LeetCode() {
   );
 
   return (
-    <section id="leetcode" style={{ width: '100%', padding: '100px 0' }}>
+    <section id="leetcode" style={{ width: '100%', padding: 'clamp(60px, 10vw, 100px) 0' }}>
       <div className="wrap">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
@@ -84,7 +84,7 @@ export default function LeetCode() {
         </motion.div>
 
         {loading && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,200px),1fr))', gap: 20 }}>
             {[...Array(4)].map((_, i) => <div key={i} className="skeleton" style={{ height: 130, borderRadius: 20 }} />)}
           </div>
         )}
@@ -101,7 +101,7 @@ export default function LeetCode() {
         {!loading && !error && stats && (
           <>
             <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 16, marginBottom: 24 }}>
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,200px),1fr))', gap: 16, marginBottom: 24 }}>
               <StatCard label="Total Solved" value={stats.totalSolved} Icon={CheckCircle} color="#00ff88" />
               <StatCard label="Global Ranking" value={stats.ranking ? `#${stats.ranking.toLocaleString()}` : null} Icon={Trophy} color="#ffaa00" />
               <StatCard label="Acceptance Rate" value={stats.acceptanceRate ? `${stats.acceptanceRate}%` : null} Icon={Target} color="#00d4ff" />

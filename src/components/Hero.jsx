@@ -15,7 +15,7 @@ export default function Hero({ booted }) {
     <section id="hero" style={{
       minHeight: '100vh', width: '100%', position: 'relative',
       display: 'flex', alignItems: 'center',
-      padding: '80px 0 0', overflow: 'hidden',
+      padding: '60px 0 0', overflow: 'hidden',
     }}>
       <div className="hero-grid" />
 
@@ -44,10 +44,10 @@ export default function Hero({ booted }) {
           transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           style={{ marginBottom: 20 }}
         >
-          <div className="display" style={{ fontSize: 'clamp(60px,10vw,120px)', letterSpacing: '-0.04em', lineHeight: 0.95, color: '#fff' }}>
+          <div className="display" style={{ fontSize: 'clamp(36px,10vw,120px)', letterSpacing: '-0.04em', lineHeight: 0.95, color: '#fff' }}>
             ADITYA
           </div>
-          <div className="display g-text" style={{ fontSize: 'clamp(60px,10vw,120px)', letterSpacing: '-0.04em', lineHeight: 0.95 }}>
+          <div className="display g-text" style={{ fontSize: 'clamp(36px,10vw,120px)', letterSpacing: '-0.04em', lineHeight: 0.95 }}>
             MISHRA
           </div>
         </motion.div>
@@ -113,11 +113,12 @@ export default function Hero({ booted }) {
             { num: '4', suffix: '', label: 'SYSTEMS' },
           ].map(({ num, suffix, label }) => (
             <div key={label} style={{
-              padding: '16px 24px',
+              padding: '14px 18px',
               border: '1px solid rgba(0,255,136,0.15)',
               borderRadius: 12,
               background: 'rgba(0,255,136,0.03)',
-              minWidth: 120,
+              flex: '1 1 90px',
+              minWidth: 0,
             }}>
               <div style={{
                 fontFamily: "'JetBrains Mono', monospace",

@@ -26,7 +26,7 @@ export default function Projects() {
   }, []);
 
   return (
-    <section id="projects" style={{ width: '100%', padding: '120px 0', position: 'relative' }}>
+    <section id="projects" style={{ width: '100%', padding: 'clamp(60px, 10vw, 120px) 0', position: 'relative' }}>
       <div className="wrap">
         <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
@@ -48,7 +48,7 @@ export default function Projects() {
         </motion.div>
 
         {loading && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(320px,1fr))', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,320px),1fr))', gap: 20 }}>
             {[...Array(6)].map((_, i) => (
               <div key={i} style={{ borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(0,255,136,0.06)' }}>
                 <div style={{ height: 8, background: 'rgba(0,255,136,0.04)', animation: 'neonPulse 1.5s ease-in-out infinite' }}/>
@@ -72,7 +72,7 @@ export default function Projects() {
         )}
 
         {!loading && !error && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(320px,1fr))', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,320px),1fr))', gap: 20 }}>
             {repos.map((repo, i) => {
               const accent = accentColors[i % accentColors.length];
               return (
