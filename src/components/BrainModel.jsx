@@ -1,9 +1,52 @@
-import { useRef, useMemo, useState, useEffect, Suspense, useCallback } from 'react';
+import { useRef, useMemo, useState, useEffect, Suspense, useCallback, Component } from 'react';
 import { Canvas, useFrame, useThree, useLoader } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import { skills } from '../data/portfolio';
+
+/* ── Error boundary — catches WebGL context loss ── */
+class WebGLErrorBoundary extends Component {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
+
+/* ── Static skill cards fallback for mobile failures ── */
+function SkillCardsFallback() {
+  return (
+    <div style={{ width: '100%', padding: '20px 0' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%,160px), 1fr))', gap: 12 }}>
+        {skills.map(skill => {
+          const c = skill.color;
+          return (
+            <div key={skill.category} style={{
+              padding: '14px 16px', borderRadius: 14,
+              background: `${c}1A`, border: `1px solid ${c}35`,
+              backdropFilter: 'blur(10px)',
+            }}>
+              <div style={{
+                fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase',
+                color: c, fontFamily: "'JetBrains Mono', monospace", marginBottom: 8,
+              }}>{skill.category}</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                {skill.items.map(item => (
+                  <span key={item} style={{
+                    padding: '3px 10px', borderRadius: 50, fontSize: 11, fontWeight: 500,
+                    color: '#eee', background: `${c}20`, border: `1px solid ${c}35`, whiteSpace: 'nowrap',
+                  }}>{item}</span>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 /* OrbitControls wrapper — strips cursor overrides */
 function NoCursorControls() {
@@ -389,30 +432,52 @@ function SkillLabel({ skill, screenPos, isActive }) {
 export default function BrainModel() {
   const [active, setActive] = useState(null);
   const [labelPositions, setLabelPositions] = useState([]);
+  const [webglFailed, setWebglFailed] = useState(false);
 
   const handleLabelPositions = useCallback((positions) => {
     setLabelPositions(positions);
   }, []);
 
+  // Check WebGL support upfront
+  useEffect(() => {
+    try {
+      const c = document.createElement('canvas');
+      const gl = c.getContext('webgl2') || c.getContext('webgl');
+      if (!gl) setWebglFailed(true);
+    } catch { setWebglFailed(true); }
+  }, []);
+
+  if (webglFailed) return <SkillCardsFallback />;
+
+  const isTouchDevice = typeof window !== 'undefined' && !window.matchMedia('(hover: hover)').matches;
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'visible' }}>
-      <Canvas
-        camera={{ position: [0, 0.2, 2.6], fov: 45 }}
-        gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
-        style={{ background: 'transparent' }}
-        onCreated={({ gl }) => {
-          gl.setClearColor(new THREE.Color(0x000000), 0);
-          gl.setClearAlpha(0);
-        }}
-      >
-        <Suspense fallback={null}>
-          <HoloBrain onHover={setActive} active={active} onLabelPositions={handleLabelPositions} />
-        </Suspense>
-        <NoCursorControls />
-      </Canvas>
+      <WebGLErrorBoundary fallback={<SkillCardsFallback />}>
+        <Canvas
+          camera={{ position: [0, 0.2, 2.6], fov: 45 }}
+          gl={{ alpha: true, antialias: !isTouchDevice, powerPreference: isTouchDevice ? 'low-power' : 'high-performance' }}
+          dpr={isTouchDevice ? [1, 1.5] : [1, 2]}
+          style={{ background: 'transparent' }}
+          onCreated={({ gl }) => {
+            gl.setClearColor(new THREE.Color(0x000000), 0);
+            gl.setClearAlpha(0);
+            // Handle WebGL context loss
+            gl.domElement.addEventListener('webglcontextlost', (e) => {
+              e.preventDefault();
+              setWebglFailed(true);
+            });
+          }}
+        >
+          <Suspense fallback={null}>
+            <HoloBrain onHover={setActive} active={active} onLabelPositions={handleLabelPositions} />
+          </Suspense>
+          <NoCursorControls />
+        </Canvas>
+      </WebGLErrorBoundary>
 
       {/* Labels rendered as HTML overlay — never clipped */}
-      {skills.map((skill, i) => (
+      {!webglFailed && skills.map((skill, i) => (
         <SkillLabel
           key={skill.category}
           skill={skill}
@@ -421,16 +486,16 @@ export default function BrainModel() {
         />
       ))}
 
-      {active === null && (
+      {!webglFailed && active === null && (
         <div style={{
           position: 'absolute', bottom: 12, left: '50%', transform: 'translateX(-50%)',
           fontSize: 10, fontWeight: 600, letterSpacing: 2, color: 'rgba(0,255,136,0.2)',
           fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase',
           pointerEvents: 'none', whiteSpace: 'nowrap',
         }}>
-          {typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches
-            ? 'drag to rotate \u00b7 hover to explore'
-            : 'pinch to zoom \u00b7 swipe to rotate'}
+          {isTouchDevice
+            ? 'pinch to zoom \u00b7 swipe to rotate'
+            : 'drag to rotate \u00b7 hover to explore'}
         </div>
       )}
     </div>
