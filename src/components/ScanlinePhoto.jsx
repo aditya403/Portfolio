@@ -14,7 +14,8 @@ export default function ScanlinePhoto({ src, alt, style }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <img src={src} alt={alt}
+      <img src={src} alt={alt} loading="lazy" decoding="async"
+        width="180" height="220"
         style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }}
       />
       <div style={{

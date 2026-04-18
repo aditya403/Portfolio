@@ -367,10 +367,10 @@ function HoloBrain({ onHover, active, onLabelPositions }) {
         dist2 = min(dist2, 1.0 - dist2);
         float pulse2 = exp(-dist2 * dist2 * 50.0) * 0.5;
         // Fade: each synapse randomly active/dormant
-        float active = smoothstep(0.3, 0.5, sin(uTime * 0.4 + phase * 3.0));
-        vAlpha = (pulse + pulse2) * active;
+        float alive = smoothstep(0.3, 0.5, sin(uTime * 0.4 + phase * 3.0));
+        vAlpha = (pulse + pulse2) * alive;
         vHeight = position.y * 0.5 + 0.5;
-        gl_PointSize = (2.0 + pulse * 3.0) * active;
+        gl_PointSize = (2.0 + pulse * 3.0) * alive;
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
         gl_PointSize *= (200.0 / -mv.z);
         gl_Position = projectionMatrix * mv;

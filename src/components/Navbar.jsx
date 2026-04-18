@@ -49,7 +49,7 @@ export default function Navbar() {
       <div className="wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 32px' }}>
         {/* Logo */}
         <MagneticDiv strength={0.15}>
-          <Link to="hero" smooth duration={500} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+          <Link to="hero" smooth duration={500} href="#hero" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
             <div style={{
               width: 36, height: 36, borderRadius: 10,
               background: 'linear-gradient(135deg,#00ff88,#00d4ff)',
@@ -67,7 +67,7 @@ export default function Navbar() {
           {LINKS.map(([label, id]) => (
             <li key={id} style={{ position: 'relative' }}>
               <MagneticLink
-                to={id} smooth duration={500} offset={-70} spy
+                to={id} smooth duration={500} offset={-70} spy href={`#${id}`}
                 style={{ display: 'block', padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 500, color: active === id ? '#fff' : 'rgba(255,255,255,0.55)', transition: 'color 0.2s', textDecoration: 'none', position: 'relative', zIndex: 1 }}
                 onSetActive={() => setActive(id)}
                 onMouseEnter={e => { e.target.style.color='#fff'; }}
@@ -99,6 +99,7 @@ export default function Navbar() {
 
         {/* Mobile burger */}
         <button onClick={() => setOpen(!open)} className="mobile-burger"
+          aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
           style={{ display: 'none', background: 'none', border: 'none', color: '#fff', padding: 4 }}>
           {open ? <X size={22}/> : <Menu size={22}/>}
         </button>

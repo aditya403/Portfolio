@@ -8,8 +8,10 @@ export default function SpaceBackground() {
     const ctx = canvas.getContext('2d');
     let animId;
     let visible = true;
+    let cleanedUp = false;
 
-    const STAR_COUNT = 350;
+    const isMobile = window.innerWidth < 768;
+    const STAR_COUNT = isMobile ? 120 : 250;
     const stars = [];
     const shootingStars = [];
     let shootTimer = 0;
@@ -229,11 +231,17 @@ export default function SpaceBackground() {
       }
     };
 
-    resize();
-    window.addEventListener('resize', resize);
-    draw();
+    // Defer canvas setup to avoid blocking LCP
+    const startId = requestAnimationFrame(() => {
+      if (cleanedUp) return;
+      resize();
+      window.addEventListener('resize', resize);
+      draw();
+    });
 
     return () => {
+      cleanedUp = true;
+      cancelAnimationFrame(startId);
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
       observer.disconnect();

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { MapPin, Cpu, BookOpen, Atom } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { personal, interests } from '../data/portfolio';
 import TiltCard from './TiltCard';
 import OdometerNumber from './OdometerNumber';
@@ -57,11 +57,11 @@ export default function About() {
         </motion.div>
 
         <div className="about-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'auto auto', gap: 16 }}>
-          {/* Photo + Bio */}
-          <motion.div {...anim(0.05)} style={{ gridColumn: 'span 2' }} className="about-bio">
+          {/* Photo + Bio — no animation to avoid LCP delay */}
+          <div style={{ gridColumn: 'span 2' }} className="about-bio">
             <TiltCard maxTilt={8} className="card" style={{ padding: '32px', height: '100%' }}>
               <div style={{ display: 'flex', gap: 28, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                <ScanlinePhoto src="/aditya_image.jpeg" alt="Aditya Mishra" style={{ width: 'clamp(120px, 30vw, 180px)', height: 'clamp(150px, 36vw, 220px)', flexShrink: 0 }} />
+                <ScanlinePhoto src="/aditya_image.webp" alt="Aditya Mishra" style={{ width: 'clamp(120px, 30vw, 180px)', height: 'clamp(150px, 36vw, 220px)', flexShrink: 0 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 3, color: 'rgba(255,255,255,0.2)', marginBottom: 14, textTransform: 'uppercase' }}>Background</div>
                   <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.55)', lineHeight: 1.85, marginBottom: 14 }}>
@@ -76,7 +76,7 @@ export default function About() {
                 </div>
               </div>
             </TiltCard>
-          </motion.div>
+          </div>
 
           {/* Location */}
           <motion.div {...anim(0.1)}>

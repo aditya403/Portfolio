@@ -9,6 +9,9 @@ function MagneticTop() {
   return (
     <motion.div ref={ref} style={{ x, y, display: 'inline-block' }}>
       <Link to="hero" smooth duration={700}
+        role="button"
+        tabIndex={0}
+        aria-label="Back to top"
         style={{
           width: 38, height: 38, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
           background: 'rgba(0,255,136,0.1)', border: '1px solid rgba(0,255,136,0.2)',
@@ -28,14 +31,14 @@ export default function Footer() {
     <footer style={{ width: '100%', padding: '40px 0 28px', borderTop: '1px solid rgba(0,255,136,0.06)' }}>
       <div className="wrap">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.2)' }}>
+          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)' }}>
             © {new Date().getFullYear()} {personal.name} · Built with <span style={{ color: '#00ff88' }}>React</span>
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <a href={`mailto:${personal.email}`}
-              style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', textDecoration: 'none', transition: 'color 0.2s' }}
+              style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', textDecoration: 'none', transition: 'color 0.2s' }}
               onMouseEnter={e => { e.target.style.color = '#00ff88'; e.target.style.textShadow = '0 0 10px rgba(0,255,136,0.4)'; }}
-              onMouseLeave={e => { e.target.style.color = 'rgba(255,255,255,0.3)'; e.target.style.textShadow = 'none'; }}
+              onMouseLeave={e => { e.target.style.color = 'rgba(255,255,255,0.55)'; e.target.style.textShadow = 'none'; }}
             >{personal.email}</a>
             <MagneticTop />
           </div>

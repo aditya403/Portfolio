@@ -10,7 +10,7 @@ function MagneticWrap({ children, strength = 0.3 }) {
   return <motion.div ref={ref} style={{ x, y, display: 'inline-block' }}>{children}</motion.div>;
 }
 
-export default function Hero({ booted }) {
+export default function Hero() {
   return (
     <section id="hero" style={{
       minHeight: '100vh', width: '100%', position: 'relative',
@@ -22,8 +22,8 @@ export default function Hero({ booted }) {
       <div className="wrap" style={{ paddingTop: 60, paddingBottom: 80, width: '100%' }}>
         {/* Section marker */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={booted ? { opacity: 1, x: 0 } : {}}
+          initial={{ x: -20 }}
+          animate={{ x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
           style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 28 }}
         >
@@ -37,55 +37,38 @@ export default function Hero({ booted }) {
           <span style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.4)' }}>Open to work</span>
         </motion.div>
 
-        {/* BIG name */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={booted ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          style={{ marginBottom: 20 }}
-        >
-          <div className="display" style={{ fontSize: 'clamp(36px,10vw,120px)', letterSpacing: '-0.04em', lineHeight: 0.95, color: '#fff' }}>
+        {/* BIG name — always visible for LCP */}
+        <div style={{ marginBottom: 20 }}>
+          <h1 className="display" style={{ fontSize: 'clamp(36px,10vw,120px)', letterSpacing: '-0.04em', lineHeight: 0.95, color: '#fff', margin: 0 }}>
             ADITYA
-          </div>
-          <div className="display g-text" style={{ fontSize: 'clamp(36px,10vw,120px)', letterSpacing: '-0.04em', lineHeight: 0.95 }}>
-            MISHRA
-          </div>
-        </motion.div>
+            <span className="g-text" style={{ display: 'block' }}>MISHRA</span>
+          </h1>
+        </div>
 
         {/* Role with glitch */}
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={booted ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}
-        >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
           <div style={{ width: 40, height: 2, background: 'linear-gradient(90deg,#00ff88,#00d4ff)', borderRadius: 1, flexShrink: 0 }}/>
           <GlitchText
             text="NETWORK AUTOMATION ENGINEER"
-            trigger={booted}
+            trigger="inView"
             speed={25}
             style={{ fontSize: 15, fontWeight: 500, letterSpacing: '0.06em', color: 'rgba(255,255,255,0.5)' }}
           />
-        </motion.div>
+        </div>
 
-        {/* Description */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={booted ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          style={{ fontSize: 16, color: 'rgba(255,255,255,0.4)', lineHeight: 1.9, maxWidth: 520, marginBottom: 40 }}
-        >
+        {/* Description — visible immediately for LCP */}
+        <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.4)', lineHeight: 1.9, maxWidth: 520, marginBottom: 40 }}>
           I build{' '}
           <span style={{ color: '#00ff88', fontWeight: 600 }}>high-impact automation</span> for
           enterprise networks — turning hours of manual ops into{' '}
           <span style={{ color: '#00d4ff', fontWeight: 600 }}>deterministic, zero-touch</span> pipelines.
-        </motion.p>
+        </p>
 
         {/* CTAs */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={booted ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.9 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
           style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 56 }}
         >
           <MagneticWrap strength={0.3}>
@@ -103,8 +86,8 @@ export default function Hero({ booted }) {
         {/* Stats as system readouts */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={booted ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 1.0 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.5 }}
           style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}
         >
           {[
@@ -135,7 +118,7 @@ export default function Hero({ booted }) {
 
       {/* Scroll cue */}
       <motion.div
-        initial={{ opacity: 0 }} animate={booted ? { opacity: 1 } : {}} transition={{ delay: 2 }}
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}
         style={{ position: 'absolute', bottom: 28, left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}
       >
         <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: 2, color: 'rgba(0,255,136,0.3)', textTransform: 'uppercase' }}>scroll to explore</span>

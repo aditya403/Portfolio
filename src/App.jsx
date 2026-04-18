@@ -1,41 +1,61 @@
-import { useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import './index.css';
-import ParticleCursor from './components/ParticleCursor';
 import ScrollProgress from './components/ScrollProgress';
-import SpaceBackground from './components/SpaceBackground';
-import TerminalBoot from './components/TerminalBoot';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
-import BrainSkills from './components/BrainSkills';
-import Experience from './components/Experience';
-import Projects from './components/Projects';
-import LeetCode from './components/LeetCode';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
+import LazyOnView from './components/LazyOnView';
+const ParticleCursor = lazy(() => import('./components/ParticleCursor'));
+const SpaceBackground = lazy(() => import('./components/SpaceBackground'));
+const BrainSkills = lazy(() => import('./components/BrainSkills'));
+const Experience = lazy(() => import('./components/Experience'));
+const Projects = lazy(() => import('./components/Projects'));
+const LeetCode = lazy(() => import('./components/LeetCode'));
+const Contact = lazy(() => import('./components/Contact'));
+const Footer = lazy(() => import('./components/Footer'));
+
+function useAfterPaint() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 200));
+    const id = idle(() => setReady(true), { timeout: 1500 });
+    return () => {
+      if (window.cancelIdleCallback) window.cancelIdleCallback(id);
+      else clearTimeout(id);
+    };
+  }, []);
+  return ready;
+}
 
 export default function App() {
-  const [booted, setBooted] = useState(false);
+  const decorReady = useAfterPaint();
 
   return (
     <div style={{ background: '#0a0a0a', width: '100%', minHeight: '100vh', position: 'relative' }}>
-      {!booted && <TerminalBoot onComplete={() => setBooted(true)} />}
-
-      <ParticleCursor />
+      <a href="#main-content" className="skip-link">Skip to main content</a>
+      {decorReady && (
+        <Suspense fallback={null}>
+          <ParticleCursor />
+          <SpaceBackground />
+        </Suspense>
+      )}
       <ScrollProgress />
-      <SpaceBackground />
       <Navbar />
 
-      <main style={{ width: '100%', position: 'relative', zIndex: 1 }}>
-        <Hero booted={booted} />
+      <main id="main-content" style={{ width: '100%', position: 'relative', zIndex: 1 }}>
+        <Hero />
         <About />
-        <BrainSkills />
-        <Experience />
-        <Projects />
-        <LeetCode />
-        <Contact />
+        <Suspense fallback={null}>
+          <LazyOnView minHeight={600}><BrainSkills /></LazyOnView>
+          <LazyOnView minHeight={500}><Experience /></LazyOnView>
+          <LazyOnView minHeight={500}><Projects /></LazyOnView>
+          <LazyOnView minHeight={500}><LeetCode /></LazyOnView>
+          <LazyOnView minHeight={500}><Contact /></LazyOnView>
+        </Suspense>
       </main>
-      <Footer />
+      <Suspense fallback={null}>
+        <LazyOnView minHeight={200}><Footer /></LazyOnView>
+      </Suspense>
     </div>
   );
 }

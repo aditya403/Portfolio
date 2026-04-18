@@ -38,6 +38,7 @@ export default function Projects() {
               <GlitchText text="GitHub Projects" trigger="inView" speed={35} as="span" style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#fff' }} />
             </h2>
             <a href={personal.github} target="_blank" rel="noopener noreferrer"
+              aria-label="View all GitHub repositories"
               style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 50, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: 600, textDecoration: 'none', transition: 'all 0.2s' }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(0,255,136,0.4)'; e.currentTarget.style.color = '#fff'; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; }}
