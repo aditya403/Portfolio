@@ -14,10 +14,10 @@ class ErrorBoundary extends Component {
   render() {
     if (this.state.error) {
       return (
-        <div style={{ padding: 40, color: '#ff3366', fontFamily: 'monospace', background: '#0a0a0a', minHeight: '100vh' }}>
-          <h1 style={{ color: '#ff3366', marginBottom: 16 }}>Runtime Error</h1>
-          <pre style={{ whiteSpace: 'pre-wrap', color: '#ffaa00' }}>{this.state.error.message}</pre>
-          <pre style={{ whiteSpace: 'pre-wrap', color: 'rgba(255,255,255,0.4)', marginTop: 12, fontSize: 12 }}>{this.state.error.stack}</pre>
+        <div style={{ padding: 32, fontFamily: "'JetBrains Mono', ui-monospace, monospace", background: '#0a0a0a', color: '#d4d8d4', minHeight: '100vh', fontSize: 13 }}>
+          <div style={{ color: '#00ff88', marginBottom: 12 }}>$ ./portfolio &mdash; runtime error</div>
+          <pre style={{ whiteSpace: 'pre-wrap', color: '#d4d8d4' }}>{this.state.error.message}</pre>
+          <pre style={{ whiteSpace: 'pre-wrap', color: '#6f7672', marginTop: 12, fontSize: 12 }}>{this.state.error.stack}</pre>
         </div>
       );
     }

@@ -1,122 +1,91 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { Briefcase } from 'lucide-react';
+import useReveal from '../hooks/useReveal';
 import { experience } from '../data/portfolio';
-import TiltCard from './TiltCard';
-import GlitchText from './GlitchText';
-import OdometerNumber from './OdometerNumber';
-import SonarDot from './SonarDot';
-import ScrollVelocityText from './ScrollVelocityText';
-
-function TimelineLine() {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 80%', 'end 20%'] });
-  const scaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
-
-  return (
-    <div ref={ref} style={{
-      position: 'absolute', left: 'clamp(10px, 2vw, 18px)', top: 8, bottom: 8, width: 2,
-      background: 'rgba(0,255,136,0.06)', borderRadius: 1,
-    }}>
-      <motion.div style={{
-        position: 'absolute', top: 0, left: 0, right: 0,
-        height: '100%', transformOrigin: 'top',
-        background: 'linear-gradient(to bottom, #00ff88 0%, rgba(0,255,136,0.1) 100%)',
-        borderRadius: 1, scaleY,
-      }} />
-    </div>
-  );
-}
 
 export default function Experience() {
+  const ref = useReveal();
+  const refList = useReveal();
   return (
-    <section id="experience" style={{ width: '100%', padding: 'clamp(60px, 10vw, 120px) 0' }}>
-      <div className="wrap">
-        <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 4, color: 'rgba(0,255,136,0.5)', textTransform: 'uppercase' }}>04 — Work History</span>
-            <div style={{ width: 32, height: 1, background: 'rgba(0,255,136,0.2)' }}/>
-          </div>
+    <section id="experience">
+      <div className="wrap" style={{ position: 'relative', zIndex: 1 }}>
+        <div ref={ref} className="fade-up">
+          <div className="eyebrow">03 / Experience</div>
           <h2 className="section-title">
-            <ScrollVelocityText>Experience</ScrollVelocityText>
+            Experience.
           </h2>
-        </motion.div>
+          <p className="section-sub">
+            Four+ years at FIS shipping backend systems and AI-driven automation.
+          </p>
+        </div>
 
-        <div style={{ position: 'relative' }}>
-          <TimelineLine />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            {experience.map((job, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -30, rotate: 3, scale: 0.9 }}
-                whileInView={{ opacity: 1, x: 0, rotate: 0, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 * i, ease: [0.22, 1, 0.36, 1] }}
-                style={{ paddingLeft: 'clamp(36px, 6vw, 56px)', position: 'relative' }}
-              >
-                <div style={{ position: 'absolute', left: 'clamp(2px, 1vw, 10px)', top: 32 }}>
-                  <SonarDot />
-                </div>
+        <div ref={refList} className="fade-up-stagger" style={{ position: 'relative', paddingLeft: 32 }}>
+          {/* Timeline line */}
+          <div style={{
+            position: 'absolute',
+            left: 11,
+            top: 14,
+            bottom: 14,
+            width: 1,
+            background: 'linear-gradient(180deg, var(--primary) 0%, var(--border-strong) 25%, var(--border) 100%)',
+          }} />
 
-                <TiltCard maxTilt={6} className="card" style={{ padding: 'clamp(20px, 4vw, 32px) clamp(16px, 4vw, 36px)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 6 }}>
+          {experience.map((job, i) => (
+            <div key={i} style={{ position: 'relative', marginBottom: i === experience.length - 1 ? 0 : 28 }}>
+              {/* Timeline ring — first one is active (current role) */}
+              <div className={`timeline-ring${i === 0 ? ' active' : ''}`} style={{
+                position: 'absolute',
+                left: -27,
+                top: 30,
+              }} />
+
+              <div className="card card-hover" style={{ padding: 'clamp(20px, 3vw, 30px)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 14, marginBottom: 14 }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                    <div style={{ width: 42, height: 42, borderRadius: 10, display: 'grid', placeItems: 'center', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', flexShrink: 0, marginTop: 2 }}>
+                      <Briefcase size={18} style={{ color: 'var(--primary)' }} />
+                    </div>
                     <div>
-                      <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: 4 }}>{job.role}</h3>
-                      <span style={{ fontSize: 13, fontWeight: 700, display: 'inline-block' }}>
-                        <GlitchText text={job.company} trigger="inView" speed={40} style={{ color: '#00ff88' }} />
-                      </span>
-                    </div>
-                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <div style={{
-                        fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.6)',
-                        background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
-                        borderRadius: 50, padding: '4px 14px', marginBottom: 6, display: 'inline-block',
-                      }}>{job.period}</div>
-                      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)' }}>{job.location}</div>
-                    </div>
-                  </div>
-
-                  {/* Impact callout */}
-                  {job.highlights.some(h => h.includes('hours')) && (
-                    <div style={{
-                      margin: '16px 0 20px', padding: '18px 24px', borderRadius: 12,
-                      background: 'rgba(0,255,136,0.04)',
-                      border: '1px solid rgba(0,255,136,0.1)',
-                      backgroundImage: 'linear-gradient(rgba(0,255,136,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,136,0.02) 1px, transparent 1px)',
-                      backgroundSize: '20px 20px',
-                    }}>
-                      <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 3, color: 'rgba(0,255,136,0.4)', marginBottom: 10, textTransform: 'uppercase' }}>ANNUAL IMPACT</div>
-                      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-                        {job.highlights
-                          .filter(h => /\d+\+?\s*(?:engineering\s*)?hours?/i.test(h))
-                          .flatMap(h => h.match(/[\d,]+\+?\s*(?:engineering\s*)?hours?/gi) || [])
-                          .slice(0, 3)
-                          .map((metric, m) => (
-                            <span key={m} style={{
-                              fontFamily: "'JetBrains Mono', monospace",
-                              fontSize: 28, fontWeight: 900, color: '#00ff88',
-                              textShadow: '0 0 20px rgba(0,255,136,0.3)',
-                            }}>{metric}</span>
-                          ))}
+                      <h3 style={{ fontSize: 19, fontWeight: 700, color: 'var(--fg)', letterSpacing: '-0.02em', marginBottom: 4 }}>
+                        {job.role}
+                      </h3>
+                      <div style={{ fontSize: 14, color: 'var(--fg-mute)' }}>
+                        <span style={{ color: 'var(--fg)', fontWeight: 600 }}>{job.company}</span>
+                        <span style={{ color: 'var(--fg-faint)', margin: '0 8px' }}>·</span>
+                        <span>{job.location}</span>
                       </div>
                     </div>
-                  )}
-
-                  <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
-                    {job.highlights.map((pt, j) => (
-                      <li key={j} style={{ display: 'flex', gap: 12, fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7 }}>
-                        <span style={{ color: '#00ff88', marginTop: 4, flexShrink: 0, fontWeight: 900 }}>›</span>
-                        <span>{pt}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                    {job.techStack.map(t => <span key={t} className="tech-tag">{t}</span>)}
                   </div>
-                </TiltCard>
-              </motion.div>
-            ))}
-          </div>
+                  <div style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: 12,
+                    color: 'var(--fg-mute)',
+                    padding: '6px 12px',
+                    borderRadius: 999,
+                    border: '1px solid var(--border-strong)',
+                    background: 'var(--bg-elev)',
+                    flexShrink: 0,
+                  }}>
+                    {job.period}
+                  </div>
+                </div>
+
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 18 }}>
+                  {job.highlights.map((pt, j) => (
+                    <li key={j} style={{ display: 'flex', gap: 12, color: 'var(--fg-mute)', fontSize: 14, lineHeight: 1.7 }}>
+                      <span style={{ color: 'var(--primary)', flexShrink: 0, marginTop: 2 }}>▸</span>
+                      <span>{pt}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {job.techStack.map((t) => (
+                    <span key={t} className="pill">{t}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

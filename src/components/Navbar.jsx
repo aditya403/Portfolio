@@ -1,129 +1,151 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-scroll';
-import { Menu, X } from 'lucide-react';
-import { motion } from 'framer-motion';
-import useMagnetic from '../hooks/useMagnetic';
+import { Menu, X, Send } from 'lucide-react';
+import CommandPalette from './CommandPalette';
 
 const LINKS = [
-  ['Home','hero'],['About','about'],['Skills','skills'],
-  ['Experience','experience'],['Projects','projects'],['LeetCode','leetcode'],['Contact','contact'],
+  ['About',      'about'],
+  ['Skills',     'skills'],
+  ['Experience', 'experience'],
+  ['Projects',   'projects'],
+  ['LeetCode',   'leetcode'],
 ];
-
-function MagneticLink({ children, ...props }) {
-  const { ref, x, y } = useMagnetic(0.25);
-  return (
-    <motion.div ref={ref} style={{ x, y, display: 'inline-block' }}>
-      <Link {...props}>{children}</Link>
-    </motion.div>
-  );
-}
-
-function MagneticDiv({ children, strength = 0.15, style, className, ...props }) {
-  const { ref, x, y } = useMagnetic(strength);
-  return (
-    <motion.div ref={ref} style={{ x, y, ...style }} className={className} {...props}>
-      {children}
-    </motion.div>
-  );
-}
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
   const [active, setActive] = useState('hero');
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', fn);
-    return () => window.removeEventListener('scroll', fn);
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
-    <nav style={{
-      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
-      background: scrolled ? 'rgba(10,10,10,0.85)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(24px)' : 'none',
-      borderBottom: scrolled ? '1px solid rgba(0,255,136,0.08)' : 'none',
-      transition: 'all 0.4s ease',
-    }}>
-      <div className="wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 32px' }}>
+    <nav
+      style={{
+        position: 'fixed',
+        top: 0, left: 0, right: 0, zIndex: 200,
+        background: scrolled ? 'rgba(250, 250, 249, 0.78)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(16px) saturate(180%)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(16px) saturate(180%)' : 'none',
+        borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
+        transition: 'background 0.25s, border-color 0.25s',
+      }}
+    >
+      <div className="wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 24px' }}>
         {/* Logo */}
-        <MagneticDiv strength={0.15}>
-          <Link to="hero" smooth duration={500} href="#hero" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-            <div style={{
-              width: 36, height: 36, borderRadius: 10,
-              background: 'linear-gradient(135deg,#00ff88,#00d4ff)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontWeight: 900, fontSize: 13, color: '#0a0a0a', letterSpacing: '-0.5px',
-              fontFamily: "'JetBrains Mono', monospace",
-              boxShadow: '0 0 20px rgba(0,255,136,0.4)',
-            }}>AM</div>
-            <span style={{ fontWeight: 700, fontSize: 15, color: '#fff', letterSpacing: '-0.02em' }}>Aditya Mishra</span>
-          </Link>
-        </MagneticDiv>
+        <Link to="hero" smooth duration={500} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', textDecoration: 'none' }}>
+          <div style={{
+            width: 34, height: 34, borderRadius: 9,
+            display: 'grid', placeItems: 'center',
+            background: 'var(--fg)',
+            color: 'var(--bg)',
+            fontWeight: 800,
+            fontSize: 13,
+            letterSpacing: '-0.04em',
+            fontFamily: "'Inter Tight', sans-serif",
+          }}>AM</div>
+          <span style={{ color: 'var(--fg)', fontWeight: 600, fontSize: 15, letterSpacing: '-0.02em' }} className="nav-name">
+            Aditya Mishra
+          </span>
+        </Link>
 
         {/* Desktop links */}
-        <ul style={{ display: 'flex', gap: 2, listStyle: 'none', alignItems: 'center', position: 'relative' }} className="desktop-nav">
+        <ul className="nav-links" style={{ display: 'flex', gap: 4, listStyle: 'none', alignItems: 'center' }}>
           {LINKS.map(([label, id]) => (
             <li key={id} style={{ position: 'relative' }}>
-              <MagneticLink
-                to={id} smooth duration={500} offset={-70} spy href={`#${id}`}
-                style={{ display: 'block', padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 500, color: active === id ? '#fff' : 'rgba(255,255,255,0.55)', transition: 'color 0.2s', textDecoration: 'none', position: 'relative', zIndex: 1 }}
+              <Link
+                to={id}
+                smooth
+                duration={500}
+                offset={-70}
+                spy
                 onSetActive={() => setActive(id)}
-                onMouseEnter={e => { e.target.style.color='#fff'; }}
-                onMouseLeave={e => { if (active !== id) e.target.style.color='rgba(255,255,255,0.55)'; }}
-              >{label}</MagneticLink>
-              {active === id && (
-                <motion.div
-                  layoutId="nav-indicator"
-                  style={{
-                    position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)',
-                    width: 20, height: 2, borderRadius: 1,
-                    background: 'linear-gradient(90deg, #00ff88, #00d4ff)',
-                  }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                />
-              )}
+                style={{
+                  display: 'inline-block',
+                  padding: '8px 14px',
+                  fontSize: 13.5,
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  color: active === id ? 'var(--fg)' : 'var(--fg-dim)',
+                  transition: 'color 0.2s',
+                  position: 'relative',
+                }}
+              >
+                {label}
+                {active === id && (
+                  <span style={{
+                    position: 'absolute',
+                    left: '50%', bottom: 0,
+                    transform: 'translateX(-50%)',
+                    width: 18, height: 2,
+                    borderRadius: 1,
+                    background: 'var(--fg)',
+                  }} />
+                )}
+              </Link>
             </li>
           ))}
         </ul>
 
-        {/* CTA */}
-        <div className="desktop-nav">
-          <MagneticDiv strength={0.3}>
-            <Link to="contact" smooth duration={500} offset={-70} className="btn-primary" style={{ padding: '10px 22px', fontSize: 13 }}>
-              <span>Let&apos;s Talk</span>
-            </Link>
-          </MagneticDiv>
+        {/* CTA cluster */}
+        <div className="nav-cta" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <CommandPalette />
+          <Link to="contact" smooth duration={500} offset={-70} className="btn btn-primary" style={{ padding: '10px 18px', fontSize: 13 }}>
+            <Send size={14} />
+            <span>Let's talk</span>
+          </Link>
         </div>
 
         {/* Mobile burger */}
-        <button onClick={() => setOpen(!open)} className="mobile-burger"
-          aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
-          style={{ display: 'none', background: 'none', border: 'none', color: '#fff', padding: 4 }}>
-          {open ? <X size={22}/> : <Menu size={22}/>}
+        <button
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          onClick={() => setOpen(o => !o)}
+          className="nav-burger"
+          style={{ display: 'none', background: 'transparent', border: 'none', color: 'var(--fg)', padding: 6, cursor: 'pointer' }}
+        >
+          {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
       {/* Mobile menu */}
       {open && (
-        <div style={{ background: 'rgba(10,10,10,0.97)', backdropFilter: 'blur(24px)', borderTop: '1px solid rgba(0,255,136,0.08)', padding: '16px 20px 28px' }}>
+        <div className="nav-mobile" style={{ background: 'var(--bg-elev)', borderTop: '1px solid var(--border)', padding: '14px 24px 22px', boxShadow: 'var(--shadow-md)' }}>
           {LINKS.map(([label, id]) => (
-            <Link key={id} to={id} smooth duration={500} offset={-70}
-              style={{ display: 'block', padding: '12px 0', borderBottom: '1px solid rgba(0,255,136,0.06)', fontSize: 15, fontWeight: 600, color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}
+            <Link
+              key={id}
+              to={id}
+              smooth
+              duration={500}
+              offset={-70}
               onClick={() => setOpen(false)}
-            >{label}</Link>
+              style={{ display: 'block', padding: '12px 0', borderBottom: '1px dashed var(--border)', fontSize: 15, fontWeight: 500, color: 'var(--fg)' }}
+            >
+              {label}
+            </Link>
           ))}
-          <Link to="contact" smooth duration={500} className="btn-primary" style={{ marginTop: 20, display: 'flex', justifyContent: 'center' }} onClick={() => setOpen(false)}>
-            <span>Let&apos;s Talk</span>
+          <Link
+            to="contact"
+            smooth duration={500} offset={-70}
+            className="btn btn-primary"
+            style={{ marginTop: 18, justifyContent: 'center', width: '100%' }}
+            onClick={() => setOpen(false)}
+          >
+            <Send size={14} /> Let's talk
           </Link>
         </div>
       )}
 
       <style>{`
-        @media (max-width: 768px) {
-          .desktop-nav { display: none !important; }
-          .mobile-burger { display: block !important; }
+        @media (max-width: 820px) {
+          .nav-links, .nav-cta { display: none !important; }
+          .nav-burger { display: block !important; }
+        }
+        @media (max-width: 460px) {
+          .nav-name { display: none; }
         }
       `}</style>
     </nav>

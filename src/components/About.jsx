@@ -1,142 +1,111 @@
-import { motion } from 'framer-motion';
-import { MapPin } from 'lucide-react';
+import { MapPin, Sparkles, Workflow } from 'lucide-react';
+import useReveal from '../hooks/useReveal';
 import { personal, interests } from '../data/portfolio';
-import TiltCard from './TiltCard';
-import OdometerNumber from './OdometerNumber';
-import ScanlinePhoto from './ScanlinePhoto';
-
-const anim = (delay = 0) => ({
-  initial: { opacity: 0, y: 28, scale: 0.95 },
-  whileInView: { opacity: 1, y: 0, scale: 1 },
-  viewport: { once: true },
-  transition: { duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] },
-});
-
-function StatRing({ value, suffix, label, color, max = 100 }) {
-  const pct = (parseInt(value) / max) * 100;
-  const r = 38;
-  const circ = 2 * Math.PI * r;
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-      <div style={{ position: 'relative', width: 90, height: 90 }}>
-        <svg width={90} height={90} style={{ transform: 'rotate(-90deg)' }}>
-          <circle cx={45} cy={45} r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth={4} />
-          <motion.circle
-            cx={45} cy={45} r={r} fill="none" stroke={color} strokeWidth={4}
-            strokeLinecap="round"
-            strokeDasharray={circ}
-            initial={{ strokeDashoffset: circ }}
-            whileInView={{ strokeDashoffset: circ - (circ * Math.min(pct, 100) / 100) }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2, ease: 'easeOut' }}
-            style={{ filter: `drop-shadow(0 0 6px ${color})` }}
-          />
-        </svg>
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ fontSize: 22, fontWeight: 900, color: '#fff', fontFamily: "'JetBrains Mono', monospace" }}>
-            <OdometerNumber value={value} suffix={suffix} />
-          </div>
-        </div>
-      </div>
-      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 4 }}>{label}</div>
-    </div>
-  );
-}
 
 export default function About() {
+  const ref = useReveal();
+  const refGrid = useReveal();
+
   return (
-    <section id="about" style={{ width: '100%', padding: 'clamp(60px, 10vw, 120px) 0', position: 'relative' }}>
-      <div className="wrap">
-        <motion.div {...anim()}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 4, color: 'rgba(0,255,136,0.5)', textTransform: 'uppercase' }}>02 — About</span>
-            <div style={{ width: 32, height: 1, background: 'rgba(0,255,136,0.2)' }}/>
-          </div>
-          <h2 className="section-title">A little about myself</h2>
-        </motion.div>
-
-        <div className="about-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'auto auto', gap: 16 }}>
-          {/* Photo + Bio — no animation to avoid LCP delay */}
-          <div style={{ gridColumn: 'span 2' }} className="about-bio">
-            <TiltCard maxTilt={8} className="card" style={{ padding: '32px', height: '100%' }}>
-              <div style={{ display: 'flex', gap: 28, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                <ScanlinePhoto src="/aditya_image.webp" alt="Aditya Mishra" style={{ width: 'clamp(120px, 30vw, 180px)', height: 'clamp(150px, 36vw, 220px)', flexShrink: 0 }} />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 3, color: 'rgba(255,255,255,0.2)', marginBottom: 14, textTransform: 'uppercase' }}>Background</div>
-                  <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.55)', lineHeight: 1.85, marginBottom: 14 }}>
-                    {personal.summary}
-                  </p>
-                  <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', lineHeight: 1.8 }}>
-                    Beyond automation, I&apos;m drawn to{' '}
-                    <span style={{ color: '#00d4ff' }}>Quantum Physics</span> and{' '}
-                    <span style={{ color: '#ffaa00' }}>mathematics</span> — the same love of elegant systems
-                    that drives my engineering work.
-                  </p>
-                </div>
-              </div>
-            </TiltCard>
-          </div>
-
-          {/* Location */}
-          <motion.div {...anim(0.1)}>
-            <TiltCard maxTilt={8} className="card" style={{ padding: '28px', height: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <MapPin size={22} color="#00ff88" />
-              <div>
-                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 18, fontWeight: 800, color: '#fff' }}>PUNE, INDIA</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10 }}>
-                  <motion.div
-                    animate={{ opacity: [1, 0.3, 1] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    style={{ width: 6, height: 6, borderRadius: '50%', background: '#00ff88', boxShadow: '0 0 6px #00ff88' }}
-                  />
-                  <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: 1, color: 'rgba(0,255,136,0.6)', fontFamily: "'JetBrains Mono', monospace" }}>OPEN TO REMOTE</span>
-                </div>
-              </div>
-              <div style={{ marginTop: 'auto', display: 'flex', gap: 4 }}>
-                {['#00ff88','#00d4ff','#ff3366'].map((c, i) => (
-                  <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: c, opacity: 0.3 + i * 0.2 }}/>
-                ))}
-              </div>
-            </TiltCard>
-          </motion.div>
-
-          {/* Stats */}
-          {[
-            { num: '3', suffix: '+', label: 'Years at FIS', color: '#00ff88', max: 10 },
-            { num: '3100', suffix: '+', label: 'Hrs Saved / yr', color: '#ffaa00', max: 5000 },
-            { num: '4', suffix: '', label: 'Automation systems', color: '#00d4ff', max: 10 },
-          ].map(({ num, suffix, label, color, max }, i) => (
-            <motion.div key={label} {...anim(0.12 + i * 0.07)}>
-              <TiltCard maxTilt={8} className="card" style={{ padding: '28px', textAlign: 'center' }}>
-                <StatRing value={num} suffix={suffix} label={label} color={color} max={max} />
-              </TiltCard>
-            </motion.div>
-          ))}
+    <section id="about">
+      <div className="wrap" style={{ position: 'relative', zIndex: 1 }}>
+        <div ref={ref} className="fade-up">
+          <div className="eyebrow">01 / About</div>
+          <h2 className="section-title">
+            About me.
+          </h2>
+          <p className="section-sub">
+            Four+ years building backend systems and AI-driven automation at FIS. My work pairs Java/Spring foundations
+            with NLP agents and ServiceNow orchestration — reliable enough to run unattended in production.
+          </p>
         </div>
 
-        {/* Interests */}
-        <motion.div {...anim(0.25)} className="card" style={{ marginTop: 16 }}>
-          <div style={{ padding: '24px 28px', display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.2)', letterSpacing: 2, textTransform: 'uppercase', flexShrink: 0 }}>Interests</span>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {interests.map(item => (
-                <motion.span
-                  key={item} className="pill" style={{ fontSize: 12 }}
-                  whileHover={{ scale: 1.05, opacity: [1, 0.4, 1, 0.4, 1] }}
-                  transition={{ duration: 0.4 }}
-                >
-                  {item}
-                </motion.span>
+        {/* Bento grid */}
+        <div
+          ref={refGrid}
+          className="fade-up-stagger"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(6, 1fr)',
+            gridAutoRows: 'minmax(120px, auto)',
+            gap: 16,
+          }}
+        >
+          {/* Bio */}
+          <div className="card card-hover" style={{ gridColumn: 'span 4', padding: 28 }}>
+            <div className="num-badge" style={{ marginBottom: 12 }}>// summary</div>
+            <p style={{ color: 'var(--fg-mute)', lineHeight: 1.75, fontSize: 14.5 }}>
+              {personal.summary}
+            </p>
+          </div>
+
+          {/* Stats card */}
+          <div className="card card-hover" style={{ gridColumn: 'span 2', padding: 28, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div className="num-badge">// impact</div>
+            <div>
+              <div className="stat-number" style={{ fontSize: 'clamp(40px, 5vw, 60px)' }}>{personal.stats.hoursSaved}</div>
+              <div className="stat-label" style={{ marginTop: 6 }}>Engineering hours saved / yr</div>
+            </div>
+            <div style={{ display: 'flex', gap: 4, marginTop: 18 }}>
+              {[1,2,3,4,5,6,7,8].map((i) => (
+                <span key={i} style={{
+                  flex: 1, height: 6, borderRadius: 2,
+                  background: i <= 6 ? `linear-gradient(90deg, var(--primary), var(--secondary))` : 'rgba(15, 23, 42, 0.08)',
+                }} />
               ))}
             </div>
           </div>
-        </motion.div>
+
+          {/* Location */}
+          <div className="card card-hover" style={{ gridColumn: 'span 2', padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, display: 'grid', placeItems: 'center', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.22)' }}>
+                <MapPin size={18} style={{ color: 'var(--primary)' }} />
+              </div>
+              <div className="num-badge">// based in</div>
+            </div>
+            <div>
+              <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--fg)' }}>{personal.location}</div>
+              <div style={{ fontSize: 13, color: 'var(--fg-dim)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span className="live-dot" style={{ width: 6, height: 6 }} /> Open to remote · UTC+5:30
+              </div>
+            </div>
+          </div>
+
+          {/* Currently */}
+          <div className="card card-hover" style={{ gridColumn: 'span 4', padding: 28, display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, display: 'grid', placeItems: 'center', background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.22)' }}>
+                <Workflow size={18} style={{ color: 'var(--warm)' }} />
+              </div>
+              <div className="num-badge">// currently</div>
+            </div>
+            <div style={{ color: 'var(--fg)', fontSize: 16, lineHeight: 1.65 }}>
+              Leading an NLP-agent intake initiative — auto-extracting infrastructure requirements from unstructured emails and design docs — on track for{' '}
+              <span style={{ color: 'var(--warm)', fontWeight: 600 }}>4,200+ hrs</span> in annual savings.
+            </div>
+          </div>
+
+          {/* Interests — full row */}
+          <div className="card card-hover" style={{ gridColumn: 'span 6', padding: 24, display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, display: 'grid', placeItems: 'center', background: 'rgba(139, 92, 246, 0.1)', border: '1px solid rgba(139, 92, 246, 0.22)' }}>
+                <Sparkles size={18} style={{ color: 'var(--tertiary)' }} />
+              </div>
+              <div className="num-badge">// outside work</div>
+            </div>
+            <div style={{ flex: 1, minWidth: 200, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {interests.map(i => (
+                <span key={i} className="pill" style={{ background: 'transparent', borderColor: 'var(--border)' }}>{i}</span>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
+
       <style>{`
-        @media (max-width: 768px) {
-          .about-grid { grid-template-columns: 1fr !important; }
-          .about-bio { grid-column: span 1 !important; }
+        @media (max-width: 880px) {
+          #about .card { grid-column: span 6 !important; }
         }
       `}</style>
     </section>

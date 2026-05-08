@@ -1,41 +1,45 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Code2, Trophy, Target, CheckCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Trophy, Target, CheckCircle2, Code2, ArrowUpRight } from 'lucide-react';
+import useReveal from '../hooks/useReveal';
 import { personal } from '../data/portfolio';
-import TiltCard from './TiltCard';
-import OdometerNumber from './OdometerNumber';
 
-function GlowRing({ solved, total, color, label, size = 100 }) {
-  const pct = total > 0 ? (solved / total) * 100 : 0;
-  const r = (size - 12) / 2;
-  const circ = 2 * Math.PI * r;
-
+function Ring({ solved = 0, total = 0, label, color }) {
+  const pct = total > 0 ? Math.round((solved / total) * 100) : 0;
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, flex: 1 }}>
-      <div style={{ position: 'relative', width: size, height: size }}>
-        <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
-          <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth={5} />
-          <motion.circle
-            cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={5}
-            strokeLinecap="round" strokeDasharray={circ}
-            initial={{ strokeDashoffset: circ }}
-            whileInView={{ strokeDashoffset: circ - (circ * pct / 100) }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2, ease: 'easeOut' }}
-            style={{ filter: `drop-shadow(0 0 6px ${color})` }}
-          />
-        </svg>
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ fontSize: 16, fontWeight: 900, color, fontFamily: "'JetBrains Mono', monospace" }}>{solved}</span>
-          <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>/ {total}</span>
-        </div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+      <div className="ring is-visible" style={{ '--p': pct, '--ring-color': color }}>
+        <span>
+          {solved}
+          <small>/ {total || '—'}</small>
+        </span>
       </div>
-      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{label}</div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fg)' }}>{label}</div>
+        <div className="num-badge" style={{ color }}>{pct}% solved</div>
+      </div>
+    </div>
+  );
+}
+
+function StatBlock({ icon: Icon, label, value, color }) {
+  return (
+    <div className="card card-hover" style={{ padding: 22, display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ width: 40, height: 40, borderRadius: 10, display: 'grid', placeItems: 'center', background: `${color}14`, border: `1px solid ${color}30` }}>
+        <Icon size={18} style={{ color }} />
+      </div>
+      <div>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 26, fontWeight: 700, color: 'var(--fg)', letterSpacing: '-0.02em' }}>
+          {value ?? '—'}
+        </div>
+        <div className="stat-label" style={{ marginTop: 6 }}>{label}</div>
+      </div>
     </div>
   );
 }
 
 export default function LeetCode() {
+  const ref = useReveal();
+  const refStats = useReveal();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -47,84 +51,59 @@ export default function LeetCode() {
       .catch(() => { setError(true); setLoading(false); });
   }, []);
 
-  const StatCard = ({ label, value, Icon, color }) => (
-    <TiltCard maxTilt={8} className="card" style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div style={{ width: 44, height: 44, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${color}15`, border: `1px solid ${color}30` }}>
-        <Icon size={20} style={{ color }} />
-      </div>
-      <div>
-        <div style={{ fontSize: 28, fontWeight: 900, color: '#fff', fontFamily: "'JetBrains Mono', monospace", marginBottom: 4 }}>
-          {value != null ? (
-            typeof value === 'string' && value.startsWith('#')
-              ? <><span style={{ fontSize: 18, opacity: 0.5 }}>#</span><OdometerNumber value={value.replace(/[#,]/g, '')} /></>
-              : typeof value === 'string' && value.endsWith('%')
-                ? <OdometerNumber value={value.replace('%', '')} suffix="%" />
-                : <OdometerNumber value={String(value)} />
-          ) : '—'}
-        </div>
-        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>{label}</div>
-      </div>
-    </TiltCard>
-  );
-
   return (
-    <section id="leetcode" style={{ width: '100%', padding: 'clamp(60px, 10vw, 100px) 0' }}>
-      <div className="wrap">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 4, color: 'rgba(0,255,136,0.5)', textTransform: 'uppercase' }}>06 — Problem Solving</span>
-            <div style={{ width: 32, height: 1, background: 'rgba(0,255,136,0.2)' }}/>
-          </div>
-          <h2 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            LeetCode Stats
-            <motion.span initial={{ opacity: 0 }} whileInView={{ opacity: [0, 1, 0.5, 1] }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-              <Trophy size={28} color="#ffaa00" style={{ filter: 'drop-shadow(0 0 8px rgba(255,170,0,0.4))' }} />
-            </motion.span>
+    <section id="leetcode">
+      <div className="wrap" style={{ position: 'relative', zIndex: 1 }}>
+        <div ref={ref} className="fade-up">
+          <div className="eyebrow">05 / LeetCode</div>
+          <h2 className="section-title">
+            Problem solving.
           </h2>
-        </motion.div>
+          <p className="section-sub">
+            Live stats from my <a href={personal.leetcode} target="_blank" rel="noopener noreferrer" className="arrow-link" style={{ color: 'var(--primary)' }}>LeetCode profile</a>.
+          </p>
+        </div>
 
         {loading && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,200px),1fr))', gap: 20 }}>
-            {[...Array(4)].map((_, i) => <div key={i} className="skeleton" style={{ height: 130, borderRadius: 20 }} />)}
+          <div className="card" style={{ padding: 40, textAlign: 'center', color: 'var(--fg-dim)' }}>
+            Loading stats…
           </div>
         )}
 
         {error && (
-          <div className="card" style={{ padding: 40, textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>
-            <p style={{ marginBottom: 16 }}>Could not load LeetCode stats.</p>
-            <a href={personal.leetcode} target="_blank" rel="noopener noreferrer" style={{ color: '#00ff88', display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
-              <Code2 size={16}/> View Profile
+          <div className="card" style={{ padding: 36, textAlign: 'center' }}>
+            <p style={{ color: 'var(--fg-mute)', marginBottom: 16 }}>Couldn't load LeetCode stats.</p>
+            <a href={personal.leetcode} target="_blank" rel="noopener noreferrer" className="btn btn-ghost" style={{ display: 'inline-flex' }}>
+              <Code2 size={15} /> View profile <ArrowUpRight size={14} />
             </a>
           </div>
         )}
 
         {!loading && !error && stats && (
           <>
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,200px),1fr))', gap: 16, marginBottom: 24 }}>
-              <StatCard label="Total Solved" value={stats.totalSolved} Icon={CheckCircle} color="#00ff88" />
-              <StatCard label="Global Ranking" value={stats.ranking ? `#${stats.ranking.toLocaleString()}` : null} Icon={Trophy} color="#ffaa00" />
-              <StatCard label="Acceptance Rate" value={stats.acceptanceRate ? `${stats.acceptanceRate}%` : null} Icon={Target} color="#00d4ff" />
-              <StatCard label="Contribution Pts" value={stats.contributionPoints} Icon={Code2} color="#ff3366" />
-            </motion.div>
+            <div ref={refStats} className="fade-up-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 24 }}>
+              <StatBlock icon={CheckCircle2} label="Total solved"     value={stats.totalSolved}                                         color="#10b981" />
+              <StatBlock icon={Trophy}       label="Global ranking"   value={stats.ranking ? `#${stats.ranking.toLocaleString()}` : null} color="#f59e0b" />
+              <StatBlock icon={Target}       label="Acceptance rate"  value={stats.acceptanceRate != null ? `${stats.acceptanceRate}%` : null} color="#0ea5e9" />
+              <StatBlock icon={Code2}        label="Contribution pts" value={stats.contributionPoints}                                  color="#8b5cf6" />
+            </div>
 
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}
-              className="card" style={{ padding: '28px 32px' }}>
-              <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 24 }}>Difficulty Breakdown</p>
-              <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap', justifyContent: 'center' }}>
-                <GlowRing label="Easy" solved={stats.easySolved} total={stats.totalEasy} color="#22c55e" />
-                <GlowRing label="Medium" solved={stats.mediumSolved} total={stats.totalMedium} color="#ffaa00" />
-                <GlowRing label="Hard" solved={stats.hardSolved} total={stats.totalHard} color="#ff3366" />
+            <div className="card" style={{ padding: 'clamp(28px, 4vw, 44px)' }}>
+              <div className="num-badge" style={{ marginBottom: 24 }}>// difficulty breakdown</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 28, justifyItems: 'center' }}>
+                <Ring solved={stats.easySolved}   total={stats.totalEasy}   label="Easy"   color="#10b981" />
+                <Ring solved={stats.mediumSolved} total={stats.totalMedium} label="Medium" color="#f59e0b" />
+                <Ring solved={stats.hardSolved}   total={stats.totalHard}   label="Hard"   color="#f43f5e" />
               </div>
-            </motion.div>
+            </div>
+
+            <div style={{ marginTop: 28, textAlign: 'center' }}>
+              <a href={personal.leetcode} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
+                <Code2 size={15} /> View full profile <ArrowUpRight size={14} />
+              </a>
+            </div>
           </>
         )}
-
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} style={{ textAlign: 'center', marginTop: 28 }}>
-          <a href={personal.leetcode} target="_blank" rel="noopener noreferrer" className="btn-outline">
-            <Code2 size={16} /> View LeetCode Profile
-          </a>
-        </motion.div>
       </div>
     </section>
   );

@@ -1,61 +1,50 @@
-import { useRef, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
-const canHover = typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches;
-
-export default function CursorSpotlight({ color = 'rgba(0,255,136,0.06)', size = 600 }) {
-  const containerRef = useRef(null);
-  const spotRef = useRef(null);
+export default function CursorSpotlight() {
+  const ref = useRef(null);
 
   useEffect(() => {
-    if (!canHover) return;
-    const el = containerRef.current?.parentElement;
+    if (typeof window === 'undefined') return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const el = ref.current;
     if (!el) return;
 
-    let scheduled = false;
-    const handler = (e) => {
-      if (scheduled) return;
-      scheduled = true;
-      requestAnimationFrame(() => {
-        scheduled = false;
-        if (!spotRef.current) return;
-        const rect = el.getBoundingClientRect();
-        const x = e.clientX - rect.left - size / 2;
-        const y = e.clientY - rect.top - size / 2;
-        spotRef.current.style.transform = `translate(${x}px, ${y}px)`;
-      });
+    let raf = 0;
+    let tx = 0, ty = 0, x = 0, y = 0;
+
+    const onMove = (e) => {
+      tx = e.clientX;
+      ty = e.clientY;
+      if (!raf) raf = requestAnimationFrame(tick);
     };
-    el.addEventListener('mousemove', handler);
-    return () => el.removeEventListener('mousemove', handler);
-  }, [size]);
 
-  if (!canHover) return null;
+    const tick = () => {
+      x += (tx - x) * 0.18;
+      y += (ty - y) * 0.18;
+      el.style.transform = `translate3d(${x - 300}px, ${y - 300}px, 0)`;
+      if (Math.abs(tx - x) > 0.5 || Math.abs(ty - y) > 0.5) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        raf = 0;
+      }
+    };
 
-  return (
-    <div
-      ref={containerRef}
-      style={{
-        position: 'absolute',
-        inset: 0,
-        pointerEvents: 'none',
-        overflow: 'hidden',
-        zIndex: 0,
-        borderRadius: 'inherit',
-      }}
-    >
-      <div
-        ref={spotRef}
-        style={{
-          position: 'absolute',
-          width: size,
-          height: size,
-          left: 0,
-          top: 0,
-          background: `radial-gradient(circle, ${color}, transparent 60%)`,
-          pointerEvents: 'none',
-          willChange: 'transform',
-          transform: 'translate(-1000px, -1000px)',
-        }}
-      />
-    </div>
-  );
+    const onEnter = () => { el.style.opacity = '1'; };
+    const onLeave = () => { el.style.opacity = '0'; };
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener('mouseenter', onEnter);
+    window.addEventListener('mouseleave', onLeave);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseenter', onEnter);
+      window.removeEventListener('mouseleave', onLeave);
+    };
+  }, []);
+
+  return <div ref={ref} className="cursor-spotlight" aria-hidden="true" />;
 }
