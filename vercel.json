@@ -40,6 +40,5 @@
         { "key": "X-Robots-Tag", "value": "index, follow" }
       ]
     }
-  ],
-  "toolbar": { "enabled": false }
+  ]
 }
