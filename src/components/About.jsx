@@ -10,7 +10,7 @@ export default function About() {
     <section id="about">
       <div className="wrap" style={{ position: 'relative', zIndex: 1 }}>
         <div ref={ref} className="fade-up">
-          <div className="eyebrow">01 / About</div>
+          <div className="eyebrow">About</div>
           <h2 className="section-title">
             About me.
           </h2>

@@ -9,7 +9,7 @@ export default function Experience() {
     <section id="experience">
       <div className="wrap" style={{ position: 'relative', zIndex: 1 }}>
         <div ref={ref} className="fade-up">
-          <div className="eyebrow">03 / Experience</div>
+          <div className="eyebrow">Experience</div>
           <h2 className="section-title">
             Experience.
           </h2>
@@ -30,9 +30,9 @@ export default function Experience() {
           }} />
 
           {experience.map((job, i) => (
-            <div key={i} style={{ position: 'relative', marginBottom: i === experience.length - 1 ? 0 : 28 }}>
-              {/* Timeline ring — first one is active (current role) */}
-              <div className={`timeline-ring${i === 0 ? ' active' : ''}`} style={{
+            <div key={i} className="exp-item" style={{ position: 'relative', marginBottom: i === experience.length - 1 ? 0 : 28 }}>
+              {/* Timeline ring — lights up green on hover */}
+              <div className="timeline-ring" style={{
                 position: 'absolute',
                 left: -27,
                 top: 30,

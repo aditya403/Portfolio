@@ -971,11 +971,14 @@ section {
   background: var(--bg);
   border: 1.5px solid var(--border-strong);
   box-shadow: 0 0 0 4px var(--bg);
-  transition: all 0.25s;
+  transition: background 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.25s;
 }
-.timeline-ring.active {
+.timeline-ring.active,
+.exp-item:hover .timeline-ring,
+.exp-item:focus-within .timeline-ring {
   background: var(--primary);
   border-color: var(--primary);
+  transform: scale(1.1);
   box-shadow:
     0 0 0 4px var(--bg),
     0 0 0 6px rgba(16, 185, 129, 0.18),

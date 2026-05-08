@@ -17,7 +17,7 @@ export default function Contact() {
     <section id="contact" style={{ minHeight: '90vh', display: 'flex', alignItems: 'center' }}>
       <div className="wrap" style={{ position: 'relative', zIndex: 1, width: '100%' }}>
         <div ref={ref} className="fade-up">
-          <div className="eyebrow">06 / Contact</div>
+          <div className="eyebrow">Contact</div>
           <h2 className="display" style={{ fontSize: 'clamp(48px, 8vw, 112px)', fontWeight: 800, letterSpacing: '-0.05em', lineHeight: 0.95, marginBottom: 16, color: 'var(--fg)' }}>
             Let's<br />
             <span className="g-text">talk.</span>

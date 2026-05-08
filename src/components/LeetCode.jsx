@@ -45,17 +45,59 @@ export default function LeetCode() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch(`https://leetcode-stats-api.herokuapp.com/${personal.leetcodeUsername}`)
-      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-      .then(d => { if (d.status === 'error') throw new Error(); setStats(d); setLoading(false); })
-      .catch(() => { setError(true); setLoading(false); });
+    const u = personal.leetcodeUsername;
+    const sources = [
+      // Primary: Vercel-hosted, fast, returns the same shape as the old heroku API
+      {
+        url: `https://leetcode-api-faisalshohag.vercel.app/${u}`,
+        map: (d) => ({
+          totalSolved: d.totalSolved,
+          easySolved: d.easySolved,   totalEasy:   d.totalEasy,
+          mediumSolved: d.mediumSolved, totalMedium: d.totalMedium,
+          hardSolved: d.hardSolved,   totalHard:   d.totalHard,
+          ranking: d.ranking,
+          acceptanceRate: d.acceptanceRate ?? null,
+          contributionPoints: d.contributionPoints ?? d.contributionPoint ?? null,
+        }),
+      },
+      // Fallback: alfa-leetcode-api (different shape — combine two endpoints)
+      {
+        url: `https://alfa-leetcode-api.onrender.com/${u}/solved`,
+        map: (d) => ({
+          totalSolved: d.solvedProblem,
+          easySolved:  d.easySolved,
+          mediumSolved: d.mediumSolved,
+          hardSolved:  d.hardSolved,
+          totalEasy: null, totalMedium: null, totalHard: null,
+          ranking: null, acceptanceRate: null, contributionPoints: null,
+        }),
+      },
+    ];
+
+    (async () => {
+      for (const src of sources) {
+        try {
+          const r = await fetch(src.url);
+          if (!r.ok) continue;
+          const d = await r.json();
+          if (!d || d.status === 'error' || d.errors) continue;
+          const mapped = src.map(d);
+          if (!mapped.totalSolved && mapped.totalSolved !== 0) continue;
+          setStats(mapped);
+          setLoading(false);
+          return;
+        } catch { /* try next */ }
+      }
+      setError(true);
+      setLoading(false);
+    })();
   }, []);
 
   return (
     <section id="leetcode">
       <div className="wrap" style={{ position: 'relative', zIndex: 1 }}>
         <div ref={ref} className="fade-up">
-          <div className="eyebrow">05 / LeetCode</div>
+          <div className="eyebrow">LeetCode</div>
           <h2 className="section-title">
             Problem solving.
           </h2>

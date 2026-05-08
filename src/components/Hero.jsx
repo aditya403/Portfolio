@@ -1,8 +1,10 @@
 import { Link } from 'react-scroll';
-import { ArrowRight, Mail, Sparkles } from 'lucide-react';
+import { ArrowRight, Mail, Sparkles, Download } from 'lucide-react';
 import { Github } from './SocialIcons';
 import useReveal from '../hooks/useReveal';
 import { personal } from '../data/portfolio';
+
+const RESUME_HREF = '/aditya_mishra_resume.pdf';
 
 export default function Hero() {
   const ref = useReveal();
@@ -55,6 +57,15 @@ export default function Hero() {
                 <span>See my work</span>
                 <ArrowRight size={16} />
               </Link>
+              <a
+                href={RESUME_HREF}
+                download="aditya_mishra_resume.pdf"
+                className="btn btn-ghost"
+                aria-label="Download resume (PDF)"
+              >
+                <Download size={16} />
+                <span>Resume</span>
+              </a>
               <Link to="contact" smooth duration={500} offset={-80} className="btn btn-ghost">
                 <Mail size={16} />
                 <span>Get in touch</span>

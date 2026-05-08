@@ -159,7 +159,7 @@ export default function Projects() {
     <section id="projects">
       <div className="wrap" style={{ position: 'relative', zIndex: 1 }}>
         <div ref={ref} className="fade-up">
-          <div className="eyebrow">04 / Projects</div>
+          <div className="eyebrow">Projects</div>
           <h2 className="section-title">What I've shipped.</h2>
           <p className="section-sub">
             Selected work delivered at FIS, plus open-source side projects on GitHub.

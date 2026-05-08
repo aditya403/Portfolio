@@ -23,11 +23,11 @@ export default function App() {
         <Hero />
         <Marquee />
         <About />
-        <Divider label="// 03 — experience" />
+        <Divider label="experience" />
         <Experience />
-        <Divider label="// 04 — projects" />
+        <Divider label="projects" />
         <Projects />
-        <Divider label="// 05 — leetcode" />
+        <Divider label="leetcode" />
         <LeetCode />
         <Contact />
       </main>

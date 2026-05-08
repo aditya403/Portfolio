@@ -8,7 +8,7 @@ export default function Marquee() {
     <section id="skills" aria-label="Tech stack">
       <div className="wrap">
         <div ref={ref} className="fade-up" style={{ marginBottom: 36 }}>
-          <div className="eyebrow">02 / Skills</div>
+          <div className="eyebrow">Skills</div>
           <h2 className="section-title">Stack at a glance.</h2>
           <p className="section-sub">
             What I reach for when I'm building. Languages, frameworks, and the systems thinking behind them.

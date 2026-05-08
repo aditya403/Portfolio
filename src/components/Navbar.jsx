@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-scroll';
-import { Menu, X, Send } from 'lucide-react';
+import { Menu, X, Send, Download } from 'lucide-react';
 import CommandPalette from './CommandPalette';
 
 const LINKS = [
@@ -94,6 +94,16 @@ export default function Navbar() {
         {/* CTA cluster */}
         <div className="nav-cta" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <CommandPalette />
+          <a
+            href="/aditya_mishra_resume.pdf"
+            download="aditya_mishra_resume.pdf"
+            className="btn btn-ghost"
+            style={{ padding: '10px 14px', fontSize: 13 }}
+            aria-label="Download resume (PDF)"
+          >
+            <Download size={14} />
+            <span>Resume</span>
+          </a>
           <Link to="contact" smooth duration={500} offset={-70} className="btn btn-primary" style={{ padding: '10px 18px', fontSize: 13 }}>
             <Send size={14} />
             <span>Let's talk</span>
@@ -127,11 +137,20 @@ export default function Navbar() {
               {label}
             </Link>
           ))}
+          <a
+            href="/aditya_mishra_resume.pdf"
+            download="aditya_mishra_resume.pdf"
+            className="btn btn-ghost"
+            style={{ marginTop: 18, justifyContent: 'center', width: '100%' }}
+            onClick={() => setOpen(false)}
+          >
+            <Download size={14} /> Download résumé
+          </a>
           <Link
             to="contact"
             smooth duration={500} offset={-70}
             className="btn btn-primary"
-            style={{ marginTop: 18, justifyContent: 'center', width: '100%' }}
+            style={{ marginTop: 10, justifyContent: 'center', width: '100%' }}
             onClick={() => setOpen(false)}
           >
             <Send size={14} /> Let's talk

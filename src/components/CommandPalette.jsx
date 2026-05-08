@@ -30,8 +30,15 @@ export default function CommandPalette() {
       run: async () => { await navigator.clipboard.writeText(personal.email); setCopied(true); setTimeout(() => setCopied(false), 1400); } },
     { id: 'email-send', label: 'Send email',     hint: personal.email,            icon: Mail,     group: 'Actions',
       run: () => { window.location.href = `mailto:${personal.email}`; } },
-    { id: 'resume',     label: 'View resume',    hint: 'PDF',                     icon: FileText, group: 'Actions',
-      run: () => { window.open('/resume.pdf', '_blank', 'noopener,noreferrer'); } },
+    { id: 'resume-view', label: 'View resume',     hint: 'PDF',                    icon: FileText, group: 'Actions',
+      run: () => { window.open('/aditya_mishra_resume.pdf', '_blank', 'noopener,noreferrer'); } },
+    { id: 'resume-dl',   label: 'Download resume', hint: 'aditya_mishra_resume.pdf', icon: FileText, group: 'Actions',
+      run: () => {
+        const a = document.createElement('a');
+        a.href = '/aditya_mishra_resume.pdf';
+        a.download = 'aditya_mishra_resume.pdf';
+        document.body.appendChild(a); a.click(); a.remove();
+      } },
 
     { id: 'gh',  label: 'GitHub',     hint: '@aditya403',               icon: GhIcon,   group: 'Links', run: () => window.open(personal.github,   '_blank', 'noopener,noreferrer') },
     { id: 'li',  label: 'LinkedIn',   hint: 'adityamishra2710',         icon: Linkedin, group: 'Links', run: () => window.open(personal.linkedin, '_blank', 'noopener,noreferrer') },
