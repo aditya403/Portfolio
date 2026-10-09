@@ -42,13 +42,12 @@ export default function Hero() {
 
             {/* Role */}
             <h2 className="display" style={{ fontSize: 'clamp(20px, 2.6vw, 28px)', fontWeight: 600, color: 'var(--fg-mute)', letterSpacing: '-0.02em', marginBottom: 24, marginTop: 12 }}>
-              Software Engineer at <span style={{ color: 'var(--fg)' }}>FIS</span>.
+              Network Platform Automation Engineer at <span style={{ color: 'var(--fg)' }}>FIS</span>.
             </h2>
 
             {/* Description */}
             <p style={{ fontSize: 16.5, lineHeight: 1.7, color: 'var(--fg-mute)', maxWidth: 540, marginBottom: 32 }}>
-              I build backend systems and AI-driven automation for enterprise infrastructure — NLP-powered intake agents,
-              workflow orchestration, governance frameworks — that have saved <span style={{ color: 'var(--fg)', fontWeight: 600 }}>7,000+ engineering hours</span> a year.
+              I build enterprise network automation across firewalls, load balancers, SSL certificates, and router workflows — saving <span style={{ color: 'var(--fg)', fontWeight: 600 }}>13,000+ engineering hours</span> annually.
             </p>
 
             {/* CTAs */}
@@ -100,7 +99,7 @@ export default function Hero() {
               {/* Floating badge: bottom-right */}
               <div className="float-badge" style={{ bottom: -18, right: -16 }}>
                 <Sparkles size={12} style={{ color: 'var(--warm)' }} />
-                <span>7,000+ hrs saved / yr</span>
+                <span>13,000+ hrs saved / yr</span>
               </div>
             </div>
           </div>

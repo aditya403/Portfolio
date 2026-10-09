@@ -162,7 +162,7 @@ export default function Projects() {
           <div className="eyebrow">Projects</div>
           <h2 className="section-title">What I've shipped.</h2>
           <p className="section-sub">
-            Selected work delivered at FIS, plus open-source side projects on GitHub.
+            Selected network automation delivered at FIS, plus open-source side projects on GitHub.
           </p>
         </div>
 

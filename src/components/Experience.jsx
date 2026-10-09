@@ -14,7 +14,7 @@ export default function Experience() {
             Experience.
           </h2>
           <p className="section-sub">
-            Four+ years at FIS shipping backend systems and AI-driven automation.
+            Four+ years at FIS delivering enterprise network automation from HLD/LLD through production support.
           </p>
         </div>
 

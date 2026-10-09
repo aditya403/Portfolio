@@ -1,10 +1,11 @@
-import { Mail, Code2, ArrowUpRight, Send } from 'lucide-react';
+import { Mail, Phone, Code2, ArrowUpRight, Send } from 'lucide-react';
 import { Github, Linkedin } from './SocialIcons';
 import useReveal from '../hooks/useReveal';
 import { personal } from '../data/portfolio';
 
 const channels = [
   { key: 'email',    Icon: Mail,     label: 'Email',     value: personal.email,                              href: `mailto:${personal.email}`, color: '#10b981' },
+  { key: 'phone',    Icon: Phone,    label: 'Phone',     value: personal.phone,                              href: `tel:${personal.phone.replace(/\s/g, '')}`, color: '#14b8a6' },
   { key: 'github',   Icon: Github,   label: 'GitHub',    value: `@${personal.githubUsername}`,               href: personal.github,            color: '#8b5cf6' },
   { key: 'linkedin', Icon: Linkedin, label: 'LinkedIn',  value: 'in/adityamishra2710',                       href: personal.linkedin,          color: '#0ea5e9' },
   { key: 'leetcode', Icon: Code2,    label: 'LeetCode',  value: `@${personal.leetcodeUsername}`,             href: personal.leetcode,          color: '#f59e0b' },
@@ -23,7 +24,7 @@ export default function Contact() {
             <span className="g-text">talk.</span>
           </h2>
           <p style={{ color: 'var(--fg-mute)', fontSize: 17, lineHeight: 1.7, maxWidth: 520, marginBottom: 36 }}>
-            Got an automation problem to solve, a project in mind, or just want to say hi? My inbox is open.
+            Have a network automation problem to solve, a workflow to design, or just want to say hi? My inbox is open.
           </p>
 
           {/* Big email CTA */}
@@ -44,8 +45,8 @@ export default function Contact() {
             <a
               key={key}
               href={href}
-              target={key === 'email' ? undefined : '_blank'}
-              rel="noopener noreferrer"
+              target={key === 'email' || key === 'phone' ? undefined : '_blank'}
+              rel={key === 'email' || key === 'phone' ? undefined : 'noopener noreferrer'}
               className="card card-hover"
               style={{ padding: 22, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 14 }}
             >

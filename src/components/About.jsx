@@ -15,8 +15,8 @@ export default function About() {
             About me.
           </h2>
           <p className="section-sub">
-            Four+ years building backend systems and AI-driven automation at FIS. My work pairs Java/Spring foundations
-            with NLP agents and ServiceNow orchestration — reliable enough to run unattended in production.
+            Four+ years building enterprise network automation at FIS. My work pairs Ansible and Resolve.io workflows
+            with ServiceNow integration across multi-vendor firewalls, load balancers, SSL, and router operations.
           </p>
         </div>
 
@@ -81,8 +81,9 @@ export default function About() {
               <div className="num-badge">// currently</div>
             </div>
             <div style={{ color: 'var(--fg)', fontSize: 16, lineHeight: 1.65 }}>
-              Leading an NLP-agent intake initiative — auto-extracting infrastructure requirements from unstructured emails and design docs — on track for{' '}
-              <span style={{ color: 'var(--warm)', fontWeight: 600 }}>4,200+ hrs</span> in annual savings.
+              Leading end-to-end network automation design and delivery across firewall, load balancer, SSL certificate,
+              router configuration, validation, and decommissioning workflows — collectively saving{' '}
+              <span style={{ color: 'var(--warm)', fontWeight: 600 }}>13,000+ hrs</span> annually.
             </div>
           </div>
 
